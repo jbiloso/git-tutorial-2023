@@ -13,7 +13,7 @@ typedef struct node{
 	struct node *next;
 }graph;
 
-graph **createAdjList(int *, int *, int *);
+graph **createAdjList(int *, int *);
 void viewList(graph **, int);
 int * graphColoring(graph **, int);
 int getAvailableColor(graph **, int *, int, int);
