@@ -1,10 +1,3 @@
-/*
-	Exercise: Vertex Coloring
-	1. Complete the basic greedy coloring program below.
-	2. Analyze the running time of the program.
-	3. Improve the quality of your solution by determining a good starting vertex.
-*/
-
 #include<stdio.h>
 #include<malloc.h>
 #include<stdlib.h>
@@ -26,16 +19,14 @@ int main(){
 	int v, e;
 	int *color;
 	
-	g = createAdjList(&v, &e); //done
-    
-	color = graphColoring(g, v);
+	g = createAdjList(&v, &e);
 	viewList(g, v);
    
+	color = graphColoring(g, v);
 	viewColor(color, v);
 	
 	free(color);
 	deleteGraph(g, v);
-    
 }
 
 graph **createAdjList(int *v, int *e){
@@ -115,17 +106,30 @@ int getAvailableColor(graph **g, int *color, int v, int curr){
 	available = (int *)malloc(sizeof(int)*(v));
 	for(i = 0; i < v; i++)
 		available[i] = 1;
-	
-	/*Insert code here for marking the colors that have been used 
-	on any previously colored vertices adjacent to it.*/
-		p = g[curr];
-	while(p != NULL){
-		if(color[p->x] != -1) // If the vertex is already colored
-			available[color[p->x]] = 0; // Mark its color as unavailable
-		p = p->next;
-	}
 
 	
+	// Mark the colors that have been used on any previously colored vertices adjacent to it
+    
+
+    
+   for(int j=0 ; j<curr; j++){ //visit previous graphs and check if the current vertex connects to it
+        p = g[j];
+        while(p != NULL){
+            if(p->x == curr){ //vertex curr has connection to the p
+                available[color[j]]= 0;
+                break;
+            }
+            p = p->next;
+        }
+   }
+    p = g[curr];
+    while(p != NULL){
+        if(color[p->x] != -1) // If the vertex is already colored
+            available[color[p->x]] = 0; // Mark its color as unavailable
+        p = p->next;
+    }
+    
+
 	
 	for(i = 0; i < v; i++){				//get the smallest color that is available
 		if(available[i] == 1){
