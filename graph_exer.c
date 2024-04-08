@@ -7,6 +7,7 @@
 
 #include<stdio.h>
 #include<malloc.h>
+#include<stdlib.h>
 
 typedef struct node{
 	int x;
@@ -20,23 +21,57 @@ int getAvailableColor(graph **, int *, int, int);
 void viewColor(int *, int);
 void deleteGraph(graph **, int);
 
-main(){
+int main(){
 	graph **g;
-	int v, e, type;
+	int v, e;
 	int *color;
 	
 	g = createAdjList(&v, &e);
 	color = graphColoring(g, v);
 	viewList(g, v);
+    /*
 	viewColor(color, v);
 	
 	free(color);
 	deleteGraph(g, v);
+    */
 }
 
 graph **createAdjList(int *v, int *e){
-	/*insert code here for creating an adjacency list*/
-	
+    FILE *file = fopen("graph.in", "r");
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        exit(1);
+    }
+
+    // Read number of vertices and edges
+    fscanf(file, "%d", v);
+    fscanf(file, "%d", e);
+
+    int num_vertices = *v;
+    int num_edges = *e;
+
+    // Allocate memory for the adjacency list
+    graph **adjList = (graph **)malloc(num_vertices * sizeof(graph *));
+    for (int i = 0; i < num_vertices; i++) {
+        adjList[i] = NULL;
+    }
+
+    // Read adjacency information from the file
+    int source, destination;
+    while (fscanf(file, "%d %d", &source, &destination) == 2) {
+        // Create a new node for the destination vertex
+        graph *newNode = (graph *)malloc(sizeof(graph));
+        newNode->x = destination;
+        newNode->next = NULL;
+
+        // Insert the new node at the beginning of the adjacency list for the source vertex
+        newNode->next = adjList[source];
+        adjList[source] = newNode;
+    }
+
+    fclose(file);
+    return adjList;
 }
 
 void viewList(graph **g, int v){
